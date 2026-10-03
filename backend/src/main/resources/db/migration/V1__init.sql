@@ -37,3 +37,8 @@ CREATE TABLE seed_history (
 
 -- 커서 페이지네이션 (created_at DESC, id DESC)
 CREATE INDEX idx_posts_created_id ON posts (created_at DESC, id DESC) WHERE deleted_at IS NULL;
+
+-- 게시글별 삭제되지 않은 댓글 최신순 조회 (커서 페이지네이션)
+CREATE INDEX idx_comments_active
+    ON comments (post_id, created_at DESC, id DESC)
+    WHERE deleted_at IS NULL;
