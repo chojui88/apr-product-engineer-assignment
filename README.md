@@ -27,6 +27,16 @@ FRONTEND_PORT=13000 BACKEND_PORT=18080 DB_PORT=25432 docker compose up --build
 `BACKEND_PORT`를 바꾸면 프론트엔드를 다시 빌드해야 해서 `--build`가 필요합니다.
 `NEXT_PUBLIC_API_BASE_URL`이 빌드 시점에 클라이언트 번들로 인라인되기 때문입니다.
 
+### 실행 확인 (2026-10-03)
+
+| 항목 | 결과 |
+| --- | --- |
+| `docker compose up --build` | db · backend · frontend 모두 healthy |
+| `GET /health` | 200 |
+| 포트 변경 (`FRONTEND_PORT=13000 BACKEND_PORT=18080 DB_PORT=25432`) | 정상 기동 |
+| `/dev-user` | 제공 화면 그대로 동작 (수정하지 않음) |
+
+
 <details>
 <summary>참고 — 제공된 스타터의 구성</summary>
 
