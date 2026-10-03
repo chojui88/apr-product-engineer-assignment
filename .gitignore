@@ -1,0 +1,23 @@
+.DS_Store
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*
+!.env.example
+
+# Build and generated files
+dist/
+**/build/
+**/out/
+coverage/
+.Rhistory
+
+# Dependencies
+node_modules/
+
+# IDE
+.idea/
+*.iml
+.vscode/
