@@ -2,8 +2,10 @@ package com.apr.community.domain.post.repository;
 
 import com.apr.community.domain.post.entity.Post;
 
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -20,6 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     //삭제 제외한 전체 개수
     long countByDeletedAtIsNull();
+
 
     //  커서 목록: (created_at, id) < (:cursorCreatedAt, :cursorId) ORDER BY created_at DESC, id DESC LIMIT :size
     @Query("""
@@ -41,5 +44,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                             @Param("id") Long id,
                             Pageable pageable);
 
-    // TODO(#5) like_count ±1 원자적 UPDATE (@Modifying)
+    // 잠금 조회
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+    SELECT p FROM Post p
+    WHERE p.id = :postId
+      AND p.deletedAt IS NULL
+""")
+    Optional<Post> findActiveByIdForUpdate(@Param("postId") Long postId);
 }
