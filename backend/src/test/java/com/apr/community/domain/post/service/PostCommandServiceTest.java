@@ -85,6 +85,16 @@ class PostCommandServiceTest {
     }
 
     @Test
+    void createPost_이모지_20개는_허용() {
+        PostRequestDTO.PostDTO request = new PostRequestDTO.PostDTO("😀".repeat(20), "내용");
+        when(postRepository.save(any(Post.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        PostResponseDTO.PostDTO result = service.createPost(request, "Jelin");
+
+        assertThat(result.title()).isEqualTo("😀".repeat(20));
+    }
+
+    @Test
     void updatePost_게시글_없으면_404() {
         when(postRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.empty());
         PostRequestDTO.PostDTO request = new PostRequestDTO.PostDTO("제목", "내용");

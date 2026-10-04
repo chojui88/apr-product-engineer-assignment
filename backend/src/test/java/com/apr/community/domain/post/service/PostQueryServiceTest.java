@@ -173,4 +173,19 @@ class PostQueryServiceTest {
         verify(commentRepository, never()).countByPostIds(anyList());
         verify(postLikeRepository, never()).findLikedPostIds(anyString(), anyList());
     }
+
+    @Test
+    void getPosts_정확히_size개면_nextCursor는_null() {
+        Post p1 = postOf(1L, "a", Instant.parse("2026-01-02T00:00:00Z"));
+        Post p2 = postOf(2L, "b", Instant.parse("2026-01-01T00:00:00Z"));
+        when(postRepository.findFirstPage(any(Pageable.class))).thenReturn(List.of(p1, p2));
+        when(postRepository.countByDeletedAtIsNull()).thenReturn(2L);
+        when(commentRepository.countByPostIds(anyList())).thenReturn(List.of());
+        when(postLikeRepository.findLikedPostIds(anyString(), anyList())).thenReturn(List.of());
+
+        PageResponse<PostResponseDTO.PostDTO> result = service.getPosts(null, 2, "Jelin");
+
+        assertThat(result.items()).hasSize(2);
+        assertThat(result.nextCursor()).isNull();
+    }
 }
