@@ -20,9 +20,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // 삭제 안 된 글 단건 조회: findByIdAndDeletedAtIsNull
     Optional<Post> findByIdAndDeletedAtIsNull(Long id);
 
+    // 삭제 안 된 글 존재 여부 (댓글 조회·작성 전 404 판단)
+    boolean existsByIdAndDeletedAtIsNull(Long id);
+
     //삭제 제외한 전체 개수
     long countByDeletedAtIsNull();
-
 
     //  커서 목록: (created_at, id) < (:cursorCreatedAt, :cursorId) ORDER BY created_at DESC, id DESC LIMIT :size
     @Query("""
