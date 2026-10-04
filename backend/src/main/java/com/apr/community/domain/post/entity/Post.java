@@ -81,4 +81,14 @@ public class Post {
     public void softDelete() {
         this.deletedAt = Instant.now();
     }
+
+    public void decreaseLikeCount() {
+        if (likeCount > 0) {
+            likeCount--;
+        }
+    }
+
+    public void increaseLikeCount(){
+        likeCount++;
+    }
 }
