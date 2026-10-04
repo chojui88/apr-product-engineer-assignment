@@ -96,7 +96,7 @@ class PostCommandServiceTest {
 
     @Test
     void updatePost_게시글_없으면_404() {
-        when(postRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.empty());
+        when(postRepository.findActiveByIdForUpdate(1L)).thenReturn(Optional.empty());
         PostRequestDTO.PostDTO request = new PostRequestDTO.PostDTO("제목", "내용");
 
         assertThatThrownBy(() -> service.updatePost(1L, request, "Jelin"))
@@ -108,7 +108,7 @@ class PostCommandServiceTest {
     @Test
     void updatePost_본인_글이_아니면_403() {
         Post post = postOf(1L, "다른사람");
-        when(postRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(post));
+        when(postRepository.findActiveByIdForUpdate(1L)).thenReturn(Optional.of(post));
         PostRequestDTO.PostDTO request = new PostRequestDTO.PostDTO("제목", "내용");
 
         assertThatThrownBy(() -> service.updatePost(1L, request, "Jelin"))
@@ -120,7 +120,7 @@ class PostCommandServiceTest {
     @Test
     void updatePost_제목이_20자_초과면_400() {
         Post post = postOf(1L, "Jelin");
-        when(postRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(post));
+        when(postRepository.findActiveByIdForUpdate(1L)).thenReturn(Optional.of(post));
         PostRequestDTO.PostDTO request = new PostRequestDTO.PostDTO("1".repeat(21), "내용");
 
         assertThatThrownBy(() -> service.updatePost(1L, request, "Jelin"))
@@ -132,7 +132,7 @@ class PostCommandServiceTest {
     @Test
     void updatePost_성공하면_댓글수와_좋아요여부_채워서_응답() {
         Post post = postOf(1L, "Jelin");
-        when(postRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(post));
+        when(postRepository.findActiveByIdForUpdate(1L)).thenReturn(Optional.of(post));
         when(commentRepository.countByPostIdAndDeletedAtIsNull(1L)).thenReturn(3L);
         when(postLikeRepository.existsById(new PostLikeId(1L, "Jelin"))).thenReturn(true);
         PostRequestDTO.PostDTO request = new PostRequestDTO.PostDTO("새 제목", "새 내용");
@@ -147,7 +147,7 @@ class PostCommandServiceTest {
 
     @Test
     void deletePost_게시글_없으면_404() {
-        when(postRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.empty());
+        when(postRepository.findActiveByIdForUpdate(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.deletePost(1L, "Jelin"))
                 .isInstanceOf(PostException.class)
@@ -158,7 +158,7 @@ class PostCommandServiceTest {
     @Test
     void deletePost_본인_글이_아니면_403_그리고_삭제되지_않음() {
         Post post = postOf(1L, "다른사람");
-        when(postRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(post));
+        when(postRepository.findActiveByIdForUpdate(1L)).thenReturn(Optional.of(post));
 
         assertThatThrownBy(() -> service.deletePost(1L, "Jelin"))
                 .isInstanceOf(PostException.class)
@@ -171,7 +171,7 @@ class PostCommandServiceTest {
     @Test
     void deletePost_성공하면_softDelete() {
         Post post = postOf(1L, "Jelin");
-        when(postRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(post));
+        when(postRepository.findActiveByIdForUpdate(1L)).thenReturn(Optional.of(post));
 
         service.deletePost(1L, "Jelin");
 

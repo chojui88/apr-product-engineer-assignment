@@ -42,7 +42,7 @@ public class PostCommandService {
     // 수정 가능한 게시글, 작성자가 본인이면 수정하고 응답 DTO 반환
     public PostResponseDTO.PostDTO updatePost(Long postId, PostRequestDTO.PostDTO request, String requester) {
         // ID로 삭제되지 않은 게시글 조회 -> 삭제되었으면 404
-        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
+        Post post = postRepository.findActiveByIdForUpdate(postId)
                 .orElseThrow(() ->
                         new PostException(PostErrorCode.POST_NOT_FOUND) );
 
@@ -68,7 +68,7 @@ public class PostCommandService {
     }
 
     public void deletePost(Long postId, String requester) {
-        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
+        Post post = postRepository.findActiveByIdForUpdate(postId)
                 .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
 
         if (!post.isOwnedBy(requester)) {
